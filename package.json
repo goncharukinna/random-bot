@@ -1,0 +1,16 @@
+{
+  "name": "random-bot",
+  "version": "1.0.0",
+  "description": "Random-bot with numbers and buttons",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No tests\" && exit 0"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "telegraf": "^4.16.3",
+    "dotenv": "^16.4.0"
+  }
+}
