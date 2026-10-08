@@ -5,7 +5,7 @@ pipeline {
     agent {
         kubernetes {
             label 'node-agent'
-            yaml '''
+            yaml """
 apiVersion: v1
 kind: Pod
 spec:
@@ -45,7 +45,7 @@ spec:
       path: /var/run/docker.sock
   - name: workspace-volume
     emptyDir: {}
-'''
+"""
         }
     }
 
