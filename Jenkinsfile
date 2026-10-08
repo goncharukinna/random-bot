@@ -9,7 +9,7 @@ spec:
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest
-    args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
+    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
     volumeMounts:
     - mountPath: /home/jenkins/agent
       name: workspace-volume
