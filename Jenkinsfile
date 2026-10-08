@@ -1,3 +1,6 @@
+cd ~/random-bot
+
+cat > Jenkinsfile << 'EOF'
 pipeline {
     agent {
         kubernetes {
@@ -29,9 +32,9 @@ spec:
       name: docker-socket
     - mountPath: /home/jenkins/agent
       name: workspace-volume
-  - name: kubectl
-    image: alpine/kubectl:latest
-    command: ['sleep', 'infinity']
+  - name: git
+    image: alpine/git:latest
+    command: ['cat']
     tty: true
     volumeMounts:
     - mountPath: /home/jenkins/agent
@@ -49,8 +52,7 @@ spec:
     environment {
         NAMESPACE = 'default'
         DOCKER_IMAGE = 'docin82/random-bot'
-        DEPLOYMENT_NAME = 'random-bot'
-        CONTAINER_NAME = 'random-bot'
+        GITOPS_REPO = 'https://github.com/goncharukinna/bots-gitops.git'
     }
 
     stages {
@@ -108,15 +110,35 @@ spec:
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Update GitOps Repo') {
             steps {
-                container('kubectl') {
-                    script {
-                        sh """
-                            kubectl set image deployment/${DEPLOYMENT_NAME} \
-                                ${CONTAINER_NAME}=${DOCKER_IMAGE}:${env.BUILD_ID} \
-                                -n ${NAMESPACE}
-                        """
+                container('git') {
+                    withCredentials([usernamePassword(
+                        credentialsId: 'github-token',
+                        usernameVariable: 'GIT_USER',
+                        passwordVariable: 'GIT_TOKEN'
+                    )]) {
+                        sh '''
+                            # Клонировать GitOps-репозиторий
+                            git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/goncharukinna/bots-gitops.git /tmp/gitops
+                            cd /tmp/gitops
+                            
+                            # Обновить тег образа в манифесте
+                            sed -i "s|image: docin82/random-bot:.*|image: docin82/random-bot:${BUILD_ID}|" manifests/random-bot/deployment.yaml
+                            
+                            # Проверить, что изменилось
+                            echo "=== Изменения в GitOps ==="
+                            git diff
+                            
+                            # Закоммитить и запушить
+                            git config user.name "Jenkins"
+                            git config user.email "jenkins@example.com"
+                            git add manifests/random-bot/deployment.yaml
+                            git commit -m "random-bot: update to ${BUILD_ID} [skip ci]"
+                            git push
+                            
+                            echo "✅ GitOps обновлён до версии ${BUILD_ID}"
+                        '''
                     }
                 }
             }
@@ -124,7 +146,13 @@ spec:
     }
 
     post {
-        success { echo "🎉 random-bot собран и задеплоен" }
-        failure { echo "❌ Ошибка сборки" }
+        success {
+            echo "🎉 random-bot ${BUILD_ID} собран, запушен и обновлён в GitOps"
+            echo "Argo CD подхватит изменение в течение 3 минут"
+        }
+        failure {
+            echo "❌ Ошибка сборки"
+        }
     }
 }
+EOF
