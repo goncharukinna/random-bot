@@ -1,6 +1,6 @@
 cd ~/random-bot
 
-cat > Jenkinsfile << 'EOF'
+
 pipeline {
     agent {
         kubernetes {
@@ -155,4 +155,4 @@ spec:
         }
     }
 }
-EOF
+
