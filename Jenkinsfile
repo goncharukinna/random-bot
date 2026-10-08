@@ -1,5 +1,3 @@
-cd ~/random-bot
-
 
 pipeline {
     agent {
