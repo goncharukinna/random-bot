@@ -41,3 +41,12 @@ Telegram-бот со случайными числами и интерактив
 
 ⚠️ **Важно:** Ansible **не управляет** этим ботом. Деплой random-bot выполняет **Jenkins**.
 
+## 🚀 GitOps
+
+Этот проект использует методологию **GitOps** для деплоя:
+
+1.  Jenkins собирает образ и обновляет тег в репозитории [bots-gitops](https://github.com/goncharukinna/bots-gitops).
+2.  **Argo CD** следит за `bots-gitops` и автоматически синхронизирует изменения в Kubernetes.
+3.  Откат версии — это `git revert` в `bots-gitops`.
+
+**CI/CD цепочка:** `git push → Jenkins → Docker Hub → bots-gitops → Argo CD → Kubernetes`
