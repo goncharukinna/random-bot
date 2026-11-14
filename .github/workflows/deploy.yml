@@ -34,7 +34,7 @@ jobs:
           git clone https://$DOCKER_USERNAME:$GITOPS_TOKEN@github.com/goncharukinna/bots-gitops.git
           cd bots-gitops
           # Здесь мы меняем путь на папку random-bot
-          sed -i "s|image: .*cat-bot:.*|image: $DOCKER_USERNAME/cat-bot:$IMAGE_TAG|" manifests/random-bot/deployment.yaml
+          sed -i "s|image: .*random-bot:.*|image: $DOCKER_USERNAME/random-bot:$IMAGE_TAG|" manifests/random-bot/deployment.yaml
           git config user.email "ci@github.com"
           git config user.name "GitHub Actions"
           git add manifests/random-bot/deployment.yaml
