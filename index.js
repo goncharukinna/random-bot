@@ -22,7 +22,7 @@ bot.command('roll', (ctx) => {
 
 bot.command('random', (ctx) => {
   const num = Math.floor(Math.random() * 100) + 1;
-  ctx.reply(`🎯 Случайное число: *${num}*`, { parse_mode: 'Markdown' });
+  ctx.reply(`Случайное число: *${num}*`, { parse_mode: 'Markdown' });
 });
 
 bot.command('coin', (ctx) => {
@@ -37,8 +37,8 @@ bot.help((ctx) => {
 bot.catch((err) => console.error('Ошибка:', err));
 
 bot.launch()
-  .then(() => console.log('✅ Random-bot запущен!'))
-  .catch((err) => { console.error('❌ Ошибка:', err); process.exit(1); });
+  .then(() => console.log('Random-bot запущен!'))
+  .catch((err) => { console.error('Ошибка:', err); process.exit(1); });
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
